@@ -1,5 +1,6 @@
-let request = require('request-promise')
+"use strict"
 
+const request = require('request-promise-native');
 let Request = exports;
 
 Request.Request = class Request {

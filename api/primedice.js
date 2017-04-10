@@ -1,11 +1,14 @@
-let Request = require('../http/request');
+"use strict"
 
-const request = new Request.Request();
+const Request = require('../http/request');
+const Game = require('./game_api');
 
-let game = require('./game_api')
-let GameAPI = game.api;
+let request = new Request.Request();
+let GameAPI = Game.API;
 
-exports.api = class PrimeDiceAPI extends GameAPI {
+let Primedice = exports;
+
+Primedice.API = class PrimeDiceAPI extends GameAPI {
     constructor(config) {
         super(config);
 
@@ -35,9 +38,18 @@ exports.api = class PrimeDiceAPI extends GameAPI {
             return null;
         }
 
-        console.log('roll', bet);
+        //console.log('roll', bet);
 
-        return bet;
+        // make_result(won, target, condition_high, roll, wager, profit, payout)
+        return this.make_result(
+            bet.bet.win,
+            bet.bet.target,
+            bet.bet.condition === '>',
+            bet.bet.roll,
+            bet.bet.amount,
+            bet.bet.profit,
+            bet.bet.multiplier
+        );
     }
 
     async request_user_info() {
@@ -58,5 +70,3 @@ exports.api = class PrimeDiceAPI extends GameAPI {
     }
 
 }
-
-let primedice = exports;
