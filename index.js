@@ -1,20 +1,6 @@
 const Args = require('command-line-args')
 const Profile = require('./profile/profile')
-const botcore = require('./bot/bot')
-
-class MyBot extends botcore.Bot {
-    constructor(api) {
-        super(api);
-    }
-
-    get_wager() {
-        return 0;
-    }
-
-    get_target() {
-        return {target: 49.5, condition_high: false};
-    }
-}
+const Bot = require('./bot/bot')
 
 const opts = [
     { name: 'site', alias: 's', type: String },
@@ -22,7 +8,7 @@ const opts = [
 ]
 
 const options = Args(opts);
-console.log(options)
+console.log(options);
 
 if (typeof(options.site) !== 'string') {
     console.log('You must specify a site');
@@ -34,32 +20,27 @@ if (typeof(options.profile) !== 'string') {
     process.exit(1);
 }
 
-async function initialize() {
-    let profiles = new Profile.Profile()
-    let profile = await profiles.load_profile(options.site, options.profile);
+let botcore = exports;
+botcore.bot = Bot;
+botcore.options = options;
+botcore.data_dir = __dirname + '/data';
+
+botcore.initialize_api = async function initialize_api(site, account) {
+    let profiles = new Profile.Profile(botcore.data_dir);
+    let profile = await profiles.load_profile(site, account);
     if (profile === null) {
-        console.log('unable to load profile', options.profile, 'on site', options.site);
+        console.log('unable to load profile', account, 'on site', site);
         process.exit(1);
     }
 
-    //console.log(profile);
-
-    let site = profile.site.toLowerCase();
-    let api = null;
-    switch (site) {
+    let lsite = site.toLowerCase();
+    switch (lsite) {
         case "primedice": {
-            api = new botcore.PrimeDice.API(profile);
-            break;
+            return new botcore.bot.PrimeDice.API(profile);
         }
 
-        default: {
-            console.log("no such API:", site);
-            return false;
-        }
+        //case "bitsler": { }
     }
 
-    let mybot = new MyBot(api);
-    mybot.run();
+    return null;
 }
-
-initialize();

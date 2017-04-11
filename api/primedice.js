@@ -38,9 +38,6 @@ Primedice.API = class PrimeDiceAPI extends GameAPI {
             return null;
         }
 
-        //console.log('roll', bet);
-
-        // make_result(won, target, condition_high, roll, wager, profit, payout)
         return this.make_result(
             bet.bet.win,
             bet.bet.target,

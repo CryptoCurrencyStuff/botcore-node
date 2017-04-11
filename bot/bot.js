@@ -15,10 +15,8 @@ bot.Bot = class Bot {
         this.requestErrCount = 0;
 
         this.balance = 0;
-        this.condition_high = false;
-        this.target = 49.5;
-
-        const self = this;
+        this.target = { };
+        this.wager = 0;
 
         //process.stdin.resume();
         process.on("SIGTERM", () => {
@@ -48,19 +46,21 @@ bot.Bot = class Bot {
         console.log('running');
 
         while (!this.shutdown) {
-
-            let target = this.get_target();
-            let wager = this.get_wager();
+            this.target = this.get_target();
+            this.wager = this.get_wager();
 
             let roll = await this.api.request_roll(wager, target.target, target.condition_high);
             if (roll !== null) {
+                this.requestErrCount = 0;
                 console.log(roll.wager, roll.roll);
             } else {
-                console.log('bet_error');
-                await sleep(1000);
+                console.log('bet_error', this.requestErrCount);
+                if (this.requestErrCount > 5)
+                    await sleep(5000);
+                else
+                    await sleep(1000);
+                this.requestErrCount++;
             }
-
-            await sleep(1000);
         }
 
         console.log('left run loop');
