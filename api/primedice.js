@@ -66,7 +66,7 @@ Primedice.API = class PrimeDiceAPI extends GameAPI {
             return null;
         }
 
-        return await user_info;
+        return user_info;
     }
 
 }

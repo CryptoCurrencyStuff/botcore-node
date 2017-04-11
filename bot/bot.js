@@ -1,22 +1,16 @@
 "use strict"
 
-const fs = require('fs-promise');
-
 const Request = require('../http/request')
 const Game = require('../api/game_api')
 const PrimeDice = require('../api/primedice')
 
-const Args = require('command-line-args')
-
-async function sleep(ms) {
-    await new Promise(resolve => setTimeout(resolve, ms));
-}
-
 let bot = exports;
+bot.Game = Game;
+bot.PrimeDice = PrimeDice;
 
 bot.Bot = class Bot {
-    constructor() {
-        this.api = null;
+    constructor(api) {
+        this.api = api;
         this.shutdown = false;
         this.requestErrCount = 0;
 
@@ -38,45 +32,7 @@ bot.Bot = class Bot {
         });
     }
 
-    async load_profile(siteName, profileName) {
-        console.log('load_profile');
-        let profilesData = await fs.readFile('./data/profiles.json');
-        let profiles = JSON.parse(profilesData);
-
-        for (let profile of profiles.profiles) {
-            if (profile.site.toLowerCase() === siteName.toLowerCase() &&
-                    profile.username.toLowerCase() === profileName.toLowerCase()) {
-                console.log(profile);
-                return profile;
-            }
-        }
-
-        return null;
-        //console.log(profiles_obj);
-    }
-
-    async run(siteName, profileName) {
-        console.log('loading profile');
-        let profile = await this.load_profile(siteName, profileName);
-        if (profile === null) {
-            console.log('unable to load profile', options.profile, 'on site', options.site);
-            return false;
-        }
-
-        let site = profile.site.toLowerCase();
-
-        switch (site) {
-        case "primedice": {
-                this.api = new PrimeDice.API(profile);
-                break;
-            }
-
-        default: {
-                console.log("no such API:", site);
-                return false;
-            }
-        }
-
+    async run() {
         console.log('checking authentication');
         let authed = await this.api.authenticate();
         if (!authed) {
@@ -89,10 +45,14 @@ bot.Bot = class Bot {
         console.log(target, wager);
         return false;
 
-        while (!this.shutdown) {
-            console.log('run');
+        console.log('running');
 
-            let roll = await this.api.request_roll(0, 49.5, false);
+        while (!this.shutdown) {
+
+            let target = this.get_target();
+            let wager = this.get_wager();
+
+            let roll = await this.api.request_roll(wager, target.target, target.condition_high);
             if (roll !== null) {
                 console.log(roll.wager, roll.roll);
             } else {
@@ -117,37 +77,7 @@ bot.Bot = class Bot {
         process.exit(0);
     }
 }
-const opts = [
-    { name: 'site', alias: 's', type: String },
-    { name: 'profile', alias: 'p', type: String },
-]
 
-const options = Args(opts);
-console.log(options)
-
-if (typeof(options.site) !== 'string') {
-    console.log('You must specify a site');
-    process.exit(1);
+async function sleep(ms) {
+    await new Promise(resolve => setTimeout(resolve, ms));
 }
-
-if (typeof(options.profile) !== 'string') {
-    console.log('You must specify a profile');
-    process.exit(1);
-}
-
-class MyBot extends bot.Bot {
-    constructor(api) {
-        super(api);
-    }
-
-    get_wager() {
-        return 0;
-    }
-
-    get_target() {
-        return {target: 49.5, condition_high: false};
-    }
-}
-
-let mybot = new MyBot();
-mybot.run(options.site, options.profile);
