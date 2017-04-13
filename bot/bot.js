@@ -38,6 +38,8 @@ bot.Bot = class Bot {
             return false;
         }
 
+        console.log(this.api.house_edge, this.getpayout(1.0));
+
         let target = this.get_target();
         let wager = this.get_wager();
         console.log(target, wager);
@@ -75,6 +77,36 @@ bot.Bot = class Bot {
     get_target() {
         console.error('You must implement get_target');
         process.exit(0);
+    }
+
+    getwagerforprofit(chance, streakcost, minprofit, stepped) {
+        streakcost = streakcost < 0 ? 0 : streakcost;
+        minprofit = minprofit < 0.0001 ? 0.0001 : minprofit;
+
+        var payout = getpayout(chance);
+        var wager = 1.;
+
+        while ((wager*payout)-wager < streakcost + minprofit)
+            wager = Math.round(wager*2);
+
+        if (!stepped) {
+            while (wager > 0 && ((wager-1)*payout)-(wager-1) > streakcost + minprofit)
+                wager -= 1;
+        }
+
+        if(wager < 1)
+            wager = 1;
+
+        return wager;
+    }
+
+    roundtoprecision(value, precision) {
+        var power = Math.pow(10, precision);
+        return Math.floor(value * power) / power;
+    }
+
+    getpayout(chance) {
+        return roundtoprecision(100./chance*(1.0-this.api.house_edge), 5);
     }
 }
 

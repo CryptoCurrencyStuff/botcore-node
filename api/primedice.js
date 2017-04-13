@@ -12,13 +12,14 @@ Primedice.API = class PrimeDiceAPI extends GameAPI {
     constructor(config) {
         super(config);
 
-        if (typeof(config.apikey == 'string' && confi.apikey !== "") {
+        if (typeof(config.apikey == 'string') && config.apikey !== "") {
             this.auth_str = "apikey=" + this.config.apikey;
         } else {
             this.auth_str = "access_token=" + this.config.token;
         }
 
         this.base_uri = 'https://api.primedice.com/api';
+        this.house_edge = 1.0;
     }
 
     async authenticate() {
