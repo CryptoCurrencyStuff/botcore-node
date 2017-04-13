@@ -12,6 +12,12 @@ Primedice.API = class PrimeDiceAPI extends GameAPI {
     constructor(config) {
         super(config);
 
+        if (typeof(config.apikey == 'string' && confi.apikey !== "") {
+            this.auth_str = "apikey=" + this.config.apikey;
+        } else {
+            this.auth_str = "access_token=" + this.config.token;
+        }
+
         this.base_uri = 'https://api.primedice.com/api';
     }
 
@@ -24,7 +30,7 @@ Primedice.API = class PrimeDiceAPI extends GameAPI {
         let query = "&amount=" + wager + "&target=" + target + "&condition=" + (condition_high ? '>' : '<');
 
         let response = await request.post(
-            this.base_uri + '/bet?access_token=' + this.config.token, query
+            this.base_uri + '/bet?' + this.auth_str, query
         );
 
         let bet = null;
@@ -49,7 +55,7 @@ Primedice.API = class PrimeDiceAPI extends GameAPI {
 
     async request_user_info() {
         let response = await request.get(
-            this.base_uri + '/users/1?access_token=' + this.config.token
+            this.base_uri + '/users/1?' + this.auth_str
         );
 
         let user_info = null;
