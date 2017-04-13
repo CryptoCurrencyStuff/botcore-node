@@ -16,9 +16,7 @@ Primedice.API = class PrimeDiceAPI extends GameAPI {
     }
 
     async authenticate() {
-        console.log(this.config.username);
         let user_info = await this.request_user_info();
-
         return user_info !== null;
     }
 
@@ -65,5 +63,4 @@ Primedice.API = class PrimeDiceAPI extends GameAPI {
 
         return user_info;
     }
-
 }

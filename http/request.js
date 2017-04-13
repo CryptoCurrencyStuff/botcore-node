@@ -14,17 +14,14 @@ Request.Request = class Request {
             uri: uri
         };
 
-        //console.log(options);
-
         try {
             const response = await request(options);
-            //console.log('query ' + response);
             return response;
         } catch (error) {
             console.log('error ' + error);
         }
 
-        return false;
+        return null;
     }
 
     async post(uri, form, headers, json = false) {
@@ -36,16 +33,13 @@ Request.Request = class Request {
             headers: headers
         };
 
-        //console.log(options);
-
         try {
             const response = await request(options);
-            //console.log('query ' + response);
             return response;
         } catch (error) {
             console.log('error ' + error);
         }
 
-        return false;
+        return null;
     }
 }
