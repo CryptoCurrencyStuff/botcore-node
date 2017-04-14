@@ -17,10 +17,12 @@ Game.API = class GameAPI {
         process.exit(0);
     }
 
-    make_result(won, target, condition_high, roll, wager, profit, payout) {
-        console.log(won, target, condition_high, roll, wager, profit, payout);
+    make_result(nonce, bet_id, won, target, condition_high, roll, wager, profit, payout) {
+        console.log(nonce, bet_id, won, target, condition_high, roll, wager, profit, payout);
 
         return {
+            nonce: nonce,
+            bet_id: bet_id,
             won: won,
             target: target,
             condition_high: condition_high,

@@ -44,6 +44,8 @@ Primedice.API = class PrimeDiceAPI extends GameAPI {
         }
 
         return this.make_result(
+            bet.bet.nonce,
+            bet.bet.id,
             bet.bet.win,
             bet.bet.target,
             bet.bet.condition === '>',
