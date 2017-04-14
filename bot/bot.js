@@ -83,7 +83,7 @@ bot.Bot = class Bot {
         streakcost = streakcost < 0 ? 0 : streakcost;
         minprofit = minprofit < 0.0001 ? 0.0001 : minprofit;
 
-        var payout = getpayout(chance);
+        var payout = this.getpayout(chance);
         var wager = 1.;
 
         while ((wager*payout)-wager < streakcost + minprofit)
@@ -106,7 +106,7 @@ bot.Bot = class Bot {
     }
 
     getpayout(chance) {
-        return roundtoprecision(100./chance*(1.0-this.api.house_edge), 5);
+        return this.roundtoprecision(100./chance*(1.0-this.api.house_edge), 5);
     }
 }
 
