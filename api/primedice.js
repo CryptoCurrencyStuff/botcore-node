@@ -43,7 +43,10 @@ Primedice.API = class PrimeDiceAPI extends GameAPI {
             return null;
         }
 
+        this.bot.balance = bet.user.balance;
+
         return this.make_result(
+            bet.user.balance,
             bet.bet.nonce,
             bet.bet.id,
             bet.bet.win,
@@ -62,13 +65,14 @@ Primedice.API = class PrimeDiceAPI extends GameAPI {
         );
 
         let user_info = null;
-
         try {
             user_info = JSON.parse(response);
         } catch (e) {
             console.error('err', e);
             return null;
         }
+
+        this.bot.balance = user_info.balance;
 
         return user_info;
     }

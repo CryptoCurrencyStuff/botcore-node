@@ -1,5 +1,7 @@
 "use strict"
 
+const sqlite3 = require('sqlite3')
+
 const Request = require('../http/request')
 const Game = require('../api/game_api')
 const PrimeDice = require('../api/primedice')
@@ -14,6 +16,7 @@ bot.Bot = class Bot {
         this.shutdown = false;
         this.requestErrCount = 0;
 
+        //this.db = new sqlite3.Database('');
         this.balance = 0;
         this.target = { };
         this.wager = 0;
@@ -25,7 +28,7 @@ bot.Bot = class Bot {
         this.curr_streak_wins = 0;
         this.curr_streak_losses = 0;
 
-        //process.stdin.resume();
+        // TODO support asking user to confirm shutdown
         process.on("SIGTERM", () => {
             console.log('SIGTERM');
             this.shutdown = true;
@@ -168,7 +171,7 @@ bot.Bot = class Bot {
     }
 
     roundtoprecision(value, precision) {
-        var power = Math.pow(10, precision);
+        let power = Math.pow(10, precision);
         return Math.floor(value * power) / power;
     }
 
