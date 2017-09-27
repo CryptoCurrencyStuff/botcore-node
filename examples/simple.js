@@ -1,23 +1,25 @@
-let botcore = require('../index')
+"use strict"
+
+const botcore = require('../index')
 
 class MyBot extends botcore.bot.Bot {
-    constructor(api) {
-        super(api);
+    constructor(config) {
+        super(config);
     }
 
-    get_wager() {
-        return 0;
-    }
-
-    get_target() {
-        return {target: 49.5, condition_high: false};
+    get_bet_options() {
+        return {
+            target: 48, condition_high: false, wager: 0
+        };
     }
 }
 
-async function initialize() {
-    let api = await botcore.initialize_api(botcore.options.site, botcore.options.profile);
-    let mybot = new MyBot(api);
-    await mybot.run();
-}
-
-initialize();
+(function() {
+    let init = async function() {
+        let api = await botcore.initialize_api(botcore.options.site, botcore.options.profile);
+        api.bot = new MyBot();
+        await api.bot.run(api);
+        process.exit(0);
+    }
+    init();
+})()

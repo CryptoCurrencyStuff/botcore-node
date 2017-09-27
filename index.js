@@ -1,10 +1,12 @@
+"use strict"
+
 const Args = require('command-line-args')
 const Profile = require('./profile/profile')
 const Bot = require('./bot/bot')
 
 const opts = [
     { name: 'site', alias: 's', type: String },
-    { name: 'profile', alias: 'p', type: String },
+    { name: 'profile', alias: 'p', type: String }
 ]
 
 const options = Args(opts);
@@ -38,7 +40,9 @@ botcore.initialize_api = async function initialize_api(site, account) {
         case "primedice": {
             return new botcore.bot.PrimeDice.API(profile);
         }
-
+        case "localtest": {
+            return new botcore.bot.LocalTest.API(profile);
+        }
         //case "bitsler": { }
     }
 

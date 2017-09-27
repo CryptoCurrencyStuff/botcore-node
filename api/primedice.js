@@ -9,17 +9,25 @@ let GameAPI = Game.API;
 let Primedice = exports;
 
 Primedice.API = class PrimeDiceAPI extends GameAPI {
-    constructor(config) {
-        super(config);
+    constructor(api_config, bot) {
+        super(api_config, bot);
 
-        if (typeof(config.apikey) === 'string' && config.apikey !== "") {
-            this.auth_str = "apikey=" + config.apikey;
+        if (typeof(api_config.apikey) === 'string' && api_config.apikey !== "") {
+            this.auth_str = "apikey=" + api_config.apikey;
         } else {
-            this.auth_str = "access_token=" + config.token;
+            this.auth_str = "access_token=" + api_config.token;
         }
 
         this.base_uri = 'https://api.primedice.com/api';
         this.house_edge = 0.01;
+    }
+
+    async create_profile(username, auth_str, is_apikey) {
+        if (is_apikey) {
+
+        } else {
+
+        }
     }
 
     async authenticate() {
@@ -33,6 +41,8 @@ Primedice.API = class PrimeDiceAPI extends GameAPI {
         let response = await request.post(
             this.base_uri + '/bet?' + this.auth_str, query
         );
+        if (response === null)
+            return null;
 
         let bet = null;
 
@@ -64,6 +74,9 @@ Primedice.API = class PrimeDiceAPI extends GameAPI {
             this.base_uri + '/users/1?' + this.auth_str
         );
 
+        if (response === null)
+            return null;
+
         let user_info = null;
         try {
             user_info = JSON.parse(response);
@@ -72,7 +85,7 @@ Primedice.API = class PrimeDiceAPI extends GameAPI {
             return null;
         }
 
-        this.bot.balance = user_info.balance;
+        this.bot.balance = await user_info.balance;
 
         return user_info;
     }

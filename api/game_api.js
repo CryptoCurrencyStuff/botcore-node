@@ -3,9 +3,14 @@
 let Game = exports;
 
 Game.API = class GameAPI {
-    constructor(bot, config) {
+    constructor(api_config, bot) {
+        this.api_config = api_config;
         this.bot = bot;
-        this.config = config;
+    }
+
+    async create_profile() {
+        console.error('You must implement create_profile');
+        process.exit(0);
     }
 
     async authenticate() {
