@@ -225,13 +225,11 @@ bot.Bot = class Bot {
                 continue;
             }
 
-            this.requestErrCount = 0;
+            this.request_error_count = 0;
 
             this.wagered += roll.wager;
 
             if (roll.won) {
-                this.streak_cost = 0;
-
                 this.total_wins++;
                 this.curr_streak_wins++;
                 this.curr_streak_losses = 0;
@@ -247,6 +245,10 @@ bot.Bot = class Bot {
             if (roll.nonce != 0 && roll.nonce % 200 == 0)
                 console.log('lowgaps', this.lowgaps, 'highgaps', this.highgaps);
             this.print_bet_result(roll);
+
+
+            if (roll.won)
+                this.streak_cost = 0;
 
             this.last_bet = roll;
 
