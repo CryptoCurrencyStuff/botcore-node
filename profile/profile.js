@@ -12,21 +12,38 @@ Profile.Profile = class {
 
     async load_profiles() {
         let data = null;
+        let profiles_obj = null;
 
         try {
             data = await fs.readFile(this.profile_path);
         } catch (e) {
             console.log(e);
+            return null;
         }
 
-        return data;
+        try {
+            profiles_obj = JSON.parse(data);
+        } catch (e) {
+            console.log(e);
+            return null;
+        }
+
+        return profiles_obj;
+    }
+
+    async load_global_config() {
+        console.log('config');
+
+        let data = await this.load_profiles();
+        if (data !== null)
+            return data.config;
+        return null;
     }
 
     async load_profile(site, account) {
         console.log('load_profile');
 
-        let data = await this.load_profiles();
-        let profiles = JSON.parse(data);
+        let profiles = await this.load_profiles();
 
         for (let profile of profiles.profiles) {
             if (profile.site.toLowerCase() === site.toLowerCase() &&

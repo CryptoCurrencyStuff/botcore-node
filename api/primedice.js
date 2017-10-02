@@ -9,8 +9,10 @@ let GameAPI = Game.API;
 let Primedice = exports;
 
 Primedice.API = class PrimeDiceAPI extends GameAPI {
-    constructor(api_config, bot) {
-        super(api_config, bot);
+    constructor(global_config, api_config, bot) {
+        super(global_config, api_config, bot);
+
+        this.api_is_nonce_based = true;
 
         if (typeof(api_config.apikey) === 'string' && api_config.apikey !== "") {
             this.auth_str = "apikey=" + api_config.apikey;
@@ -32,6 +34,27 @@ Primedice.API = class PrimeDiceAPI extends GameAPI {
 
     async authenticate() {
         let user_info = await this.request_user_info();
+        console.log(user_info);
+
+        if (user_info !== null) {
+            if (typeof(this.api_config.last_nonce) === 'number') {
+                this.expect_next_nonce = this.api_config.last_nonce+1;
+                if (this.api_config.prompt_on_nonce_mismatch) {
+                    if (this.expect_next_nonce != user_info.nonce) {
+                        console.log('expected', this.expect_next_nonce, 'user_info.nonce', user_info.nonce, user_info);
+                        let quit_wanted = Game.prompt('Nonce mismatch, next nonce is ' + user_info.nonce + ' but ' + this.api_config.last_nonce + ' is in the profile configuration, press `q` to quit: ');
+                        if (quit_wanted.length > 0 && quit_wanted.toLowerCase() === 'q') {
+                            return false;
+                        }
+                    } else {
+                        console.log('nonce consistent with saved profile');
+                    }
+                }
+                this.nonce = user_info.nonce;
+
+            }
+            this.bot.balance = user_info.balance;
+        }
         return user_info !== null;
     }
 
@@ -53,7 +76,7 @@ Primedice.API = class PrimeDiceAPI extends GameAPI {
             return null;
         }
 
-        this.bot.balance = bet.user.balance;
+        //this.bot.balance = bet.user.balance;
 
         return this.make_result(
             bet.user.balance,
@@ -85,8 +108,6 @@ Primedice.API = class PrimeDiceAPI extends GameAPI {
             return null;
         }
 
-        this.bot.balance = await user_info.balance;
-
-        return user_info;
+        return user_info.user;
     }
 }

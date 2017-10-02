@@ -1,11 +1,21 @@
 "use strict"
 
-let Game = exports;
+const prompt = require('prompt-sync')()
+const fs = require('fs-promise');
+
+const Game = exports;
+Game.prompt = prompt;
 
 Game.API = class GameAPI {
-    constructor(api_config, bot) {
+    constructor(global_config, api_config, bot) {
+        this.global_config = global_config;
         this.api_config = api_config;
+
         this.bot = bot;
+
+        this.api_is_nonce_based = false;
+        this.expect_next_nonce = 0;
+        this.nonce = 0;
     }
 
     async create_profile() {
@@ -40,7 +50,7 @@ Game.API = class GameAPI {
         };
     }
 
-    make_target(target, condition_high, wager) {
+    make_roll_target(target, condition_high, wager) {
         //console.log(target, condition_high, wager);
 
         return {

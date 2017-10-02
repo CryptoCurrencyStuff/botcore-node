@@ -3,22 +3,24 @@
 const botcore = require('../index')
 
 class MyBot extends botcore.bot.Bot {
-    constructor(config) {
-        super(config);
+    constructor() {
+        super();
     }
 
-    get_bet_options() {
-        return {
+    async get_bet_options() {
+        return await {
             target: 48, condition_high: false, wager: 0
         };
     }
 }
 
 (function() {
-    let init = async function() {
-        let api = await botcore.initialize_api(botcore.options.site, botcore.options.profile);
-        api.bot = new MyBot();
-        await api.bot.run(api);
+    let init = async () => {
+        let bot = new MyBot();
+        let success = await bot.initialize(botcore.options.site, botcore.options.profile);
+        if (success)
+            await bot.run();
+
         process.exit(0);
     }
     init();
