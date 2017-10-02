@@ -24,6 +24,8 @@ bot.Bot = class Bot {
 
         this.shutdown = false;
 
+        this.interrupt = false;
+
         this.request_error_count = 0;
 
         //this.db = new sqlite3.Database('');
@@ -41,26 +43,12 @@ bot.Bot = class Bot {
 
         process.on("SIGTERM", () => {
             console.log('SIGTERM caught');
-            if (this.prompt_on_signal) {
-                let quit_wanted = prompt('Caught signal, press `y` to quit: ');
-                if (quit_wanted.length > 0 && quit_wanted.toLowerCase() === 'y') {
-                    this.shutdown = true;
-                }
-            } else {
-                this.shutdown = true;
-            }
+            this.interrupt = true;
         });
 
         process.on("SIGINT", () => {
             console.log('SIGINT caught', this);
-            if (this.prompt_on_signal) {
-                let quit_wanted = prompt('Caught signal, press `y` to quit: ');
-                if (quit_wanted.length > 0 && quit_wanted.toLowerCase() === 'y') {
-                    this.shutdown = true;
-                }
-            } else {
-                this.shutdown = true;
-            }
+            this.interrupt = true;
         });
     }
 
@@ -97,28 +85,37 @@ bot.Bot = class Bot {
 
         this.api = api;
 
-        this.wait_for_funds = profile_obj.wait_for_funds ||
+        // Merge recognized configuration entries when available, in contexts
+        // which make sense. Order of precedence is from highest to lowest are:
+        //  1) bot implementation script
+        //  2) profile object
+        //  3) global configuration
+        this.wait_for_funds = this.wait_for_funds ||
+                profile_obj.wait_for_funds ||
                 this.config.wait_for_funds || false;
 
-        this.prompt_on_signal = profile_obj.prompt_on_signal ||
+        this.prompt_on_signal = this.prompt_on_signal ||
+                profile_obj.prompt_on_signal ||
                 this.config.prompt_on_signal || true;
 
-        this.abort_on_max_error_count = profile_obj.abort_on_max_error_count ||
+        this.abort_on_max_error_count = this.abort_on_max_error_count ||
+                profile_obj.abort_on_max_error_count ||
                 this.config.abort_on_max_error_count || 0;
 
-        this.max_error_count = profile_obj.max_error_count ||
+        this.max_error_count = this.max_error_count ||
+                profile_obj.max_error_count ||
                 this.config.max_error_count || 10;
 
-        this.min_balance = profile_obj.min_balance ||
-                this.config.min_balance || 0;
+        this.min_balance = this.min_balance ||
+                profile_obj.min_balance || this.config.min_balance || 0;
 
-        this.max_balance = profile_obj.max_balance ||
-                this.config.max_balance || 0;
+        this.max_balance = this.max_balance ||
+                profile_obj.max_balance || this.config.max_balance || 0;
 
-        this.max_profit = profile_obj.max_profit ||
-                this.config.max_profit || 0;
+        this.max_profit = this.max_profit ||
+                profile_obj.max_profit || this.config.max_profit || 0;
 
-        this.max_loss = profile_obj.max_loss ||
+        this.max_loss = this.max_loss || profile_obj.max_loss ||
                 this.config.max_loss || 0;
 
         this.low_gaps = profile_obj.low_gaps || [
@@ -194,6 +191,20 @@ bot.Bot = class Bot {
         let loop = 0;
 
         while (!this.shutdown) {
+            if (this.interrupt) {
+                if (this.prompt_on_signal) {
+                    let quit_wanted = prompt('Caught signal, press `y` to quit: ');
+                    if (quit_wanted.length > 0 && quit_wanted.toLowerCase() === 'y') {
+                        this.shutdown = true;
+                        break;
+                    }
+                } else {
+                    this.shutdown = true;
+                    break;
+                }
+                this.interrupt = false;
+            }
+
             const bet_opts = await this.get_bet_options();
 
             if (this.balance < bet_opts.wager) {

@@ -76,8 +76,6 @@ Primedice.API = class PrimeDiceAPI extends GameAPI {
             return null;
         }
 
-        //this.bot.balance = bet.user.balance;
-
         return this.make_result(
             bet.user.balance,
             bet.bet.nonce,

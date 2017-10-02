@@ -11,7 +11,6 @@ LocalTest.API = class LocalTestAPI extends GameAPI {
     constructor(global_config, api_config, bot) {
         super(global_config, api_config, bot);
 
-        this.base_uri = 'https://api.primedice.com/api';
         this.house_edge = 0.01;
 
         this.server_nonce = 0;
@@ -62,7 +61,6 @@ LocalTest.API = class LocalTestAPI extends GameAPI {
             multiplier: payout
         };
 
-        //this.bot.balance = this.server_balance;
         this.server_nonce++;
 
         return bet_result;
@@ -97,7 +95,6 @@ LocalTest.API = class LocalTestAPI extends GameAPI {
 
         lucky %= 1e4;
 
-        //console.log(lucky/100);
         return lucky/100;
     }
 }
