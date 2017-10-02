@@ -1,0 +1,29 @@
+{
+  "name": "botcore-node",
+  "version": "0.1.0",
+  "description": "A simple framework for creating provably fair gaming bots.",
+  "main": "index.js",
+  "directories": {
+    "example": "examples"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CryptoCurrencyStuff/botcore-node.git"
+  },
+  "keywords": [
+    "cryptocurrency",
+    "provably",
+    "fair",
+    "game",
+    "bot"
+  ],
+  "author": "UnixPunk",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/CryptoCurrencyStuff/botcore-node/issues"
+  },
+  "homepage": "https://github.com/CryptoCurrencyStuff/botcore-node#readme"
+}
