@@ -1,6 +1,6 @@
 "use strict"
 
-const fs = require('fs-promise');
+const fs = require('fs-extra');
 
 const Profile = exports;
 

@@ -5,7 +5,7 @@
   "main": "index.js",
   "engine": "node >= 7.6.0",
   "dependencies": {
-    "fs-promise": "2.0.x",
+    "fs-extra": "4.0.x",
     "request": "2.x.x",
     "request-promise-native": "1.0.x",
     "prompt-sync": "4.0.x",
