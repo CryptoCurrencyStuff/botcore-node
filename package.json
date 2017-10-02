@@ -3,6 +3,14 @@
   "version": "0.1.0",
   "description": "A simple framework for creating provably fair gaming bots.",
   "main": "index.js",
+  "engine": "node >= 7.6.0",
+  "dependencies": {
+    "fs-promise": "2.0.x",
+    "request": "2.x.x",
+    "request-promise-native": "1.0.x",
+    "prompt-sync": "4.0.x",
+    "command-line-args": "4.0.x"
+  }.
   "directories": {
     "example": "examples"
   },
