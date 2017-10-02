@@ -187,8 +187,7 @@ bot.Bot = class Bot {
     async run() {
         console.log('running');
 
-        const max_loops = 1000;
-        let loop = 0;
+        let last_loop_ts = Date.now();
 
         while (!this.shutdown) {
             if (this.interrupt) {
@@ -286,12 +285,11 @@ bot.Bot = class Bot {
             this.config.nonce = roll.nonce;
             this.api.nonce = roll.nonce;
 
-            await loop++;
-            if (loop == max_loops) {
-                loop = 0;
-
-                // ensure the nodejs event loop gets a chance to process
+            let loop_ts = Date.now();
+            if (loop_ts - last_loop_ts > 10) {
+                // Give the nodejs loop a chance to run
                 await this.sleep(0);
+                last_loop_ts = loop_ts;
             }
         }
 
