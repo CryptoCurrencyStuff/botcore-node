@@ -10,7 +10,7 @@
     "request-promise-native": "1.0.x",
     "prompt-sync": "4.0.x",
     "command-line-args": "4.0.x"
-  }.
+  },
   "directories": {
     "example": "examples"
   },
